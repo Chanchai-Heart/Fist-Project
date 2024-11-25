@@ -71,12 +71,12 @@ const router = createRouter({
     },
     {
       path: '/admin/products/create',
-      name: 'admin-product-create',
+      name: 'admin-products-create',
       component: AdminProductUpdate,
     },
     {
       path: '/admin/products/update/:id',
-      name: 'admin-product-update',
+      name: 'admin-products-update',
       component: AdminProductUpdate,
     },
     {
