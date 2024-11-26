@@ -66,7 +66,7 @@ const router = createRouter({
     },
     {
       path: '/admin/products',
-      name: 'admin-product-list',
+      name: 'admin-products-list',
       component: AdminProductList,
     },
     {

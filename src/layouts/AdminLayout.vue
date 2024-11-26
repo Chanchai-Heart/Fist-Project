@@ -13,7 +13,7 @@ const menus = [
     },
     {
         name: 'Product',
-        routeName: 'admin-products-create'
+        routeName: 'admin-products-list'
     },
     {
         name: 'Order',

@@ -1,12 +1,87 @@
 <script setup>
 import AdminLayout from '@/layouts/AdminLayout.vue'
+import { useAdminProductStore } from '@/stores/admin/product';
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+
+const formData = [
+    {
+        name: 'Name',
+        field: 'name'
+    },
+    {
+        name: 'Image',
+        field: 'image'
+    },
+    {
+        name: 'Price',
+        field: 'price'
+    },
+    {
+        name: 'Quantity',
+        field: 'quantity'
+    },
+    {
+        name: 'About',
+        field: 'about'
+    },
+]
+
+const productData = reactive({
+    name: '',
+    image: '',
+    price: 0,
+    quantity: 0,
+    about: '',
+    status: ''
+})
+
+const addProduct = () => {
+    adminProductStore.addProduct(productData);
+    router.push({ name: 'admin-products-list' });
+}
+
+const adminProductStore = useAdminProductStore()
+const router = useRouter()
+
 </script>
 
 
 <template>
     <AdminLayout>
         <div class="container mx-auto">
-            Product Update
+            <div class="shadow-xl p-8">
+                <div class="text-2xl font-Pacifico font-bold">Add Product</div>
+                <div class="divider"></div>
+                <!-- form -->
+                <div class="grid grid-cols-2 gap-2">
+                    <label v-for="form in formData" :key="form.field" class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">{{ form.name }}</span>
+                        </div>
+                        <input type="text" class="input input-bordered w-full" v-model="productData[form.field]" />
+                    </label>
+                </div>
+                <div class="divider"></div>
+                <!-- form select -->
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text">Status</span>
+                        </div>
+                        <select v-model="productData.status" class="select select-bordered">
+                            <option disabled selected>choose status</option>
+                            <option value="open">Open</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="divider"></div>
+                <div class="flex justify-end gap-2">
+                    <button class="btn btn-ghost w-24" @click="router.back()">Back</button>
+                    <button class="btn btn-neutral w-24" @click="addProduct">Add</button>
+                </div>
+            </div>
         </div>
     </AdminLayout>
 </template>
