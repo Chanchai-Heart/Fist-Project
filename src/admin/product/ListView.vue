@@ -2,11 +2,20 @@
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { useAdminProductStore } from '@/stores/admin/product'
+import { onMounted } from 'vue'
+
+import Table from '@/admin/Table.vue'
 import Edit from '@/components/icons/Edit.vue'
 import Trash from '@/components/icons/Trash.vue'
 
 const adminProduct = useAdminProductStore()
+onMounted(() => {
+    adminProduct.loadProduct()
+})
 
+const removeProduct = (index) => {
+    adminProduct.removeProduct(index)
+}
 
 
 </script>
@@ -23,45 +32,32 @@ const adminProduct = useAdminProductStore()
             </div>
             <div class="overflow-x-auto">
                 <div class="divider"></div>
-                <table class="table">
-                    <!-- head -->
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Image</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Status</th>
-                            <th>Update</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- row 1 -->
-                        <tr v-for="product in adminProduct.list" :key="product">
-                            <th>{{ product.name }}</th>
-                            <td><img :src="product.image" class="w-24"></td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.remainQuantity }} / {{ product.quantity }}</td>
-                            <td>
-                                <div class="badge badge-success">{{ product.status }}</div>
-                            </td>
-                            <td>{{ product.updatedAT }}</td>
-                            <td>
-                                <div class="flex gap-4">
-                                    <div class="btn btn-ghost">
-                                        <Edit class="w-6 h-6"></Edit>
-                                    </div>
-                                    <div class="btn btn-ghost">
-                                        <Trash class="w-6 h-6"></Trash>
-                                    </div>
+                <!-- header เรียใช้จาก component Table -->
+                <Table :headers="['Name', 'Image', 'Price', 'Quantity', 'Status', 'Updated At', '']">
+                    <!-- row 1 -->
+                    <tr v-for="(product, index) in adminProduct.list" :key="product">
+                        <th>{{ product.name }}</th>
+                        <td><img :src="product.image" class="w-24"></td>
+                        <td>{{ product.price }}</td>
+                        <td>{{ product.remainQuantity }} / {{ product.quantity }}</td>
+                        <td>
+                            <div class="badge" :class="product.status === 'open' ? 'badge-success' : 'badge-error'">
+                                {{ product.status }}</div>
+                        </td>
+                        <td>{{ product.updatedAT }}</td>
+                        <td>
+                            <div class="flex gap-4">
+                                <RouterLink :to="{ name: 'admin-products-update', params: { id: index } }"
+                                    class="btn btn-ghost">
+                                    <Edit class="w-6 h-6"></Edit>
+                                </RouterLink>
+                                <div @click="removeProduct(index)" class="btn btn-ghost">
+                                    <Trash class="w-6 h-6"></Trash>
                                 </div>
-
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </Table>
             </div>
         </div>
     </AdminLayout>

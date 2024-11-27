@@ -2,7 +2,8 @@
 import AdminLayout from '@/layouts/AdminLayout.vue'
 import { useAdminProductStore } from '@/stores/admin/product';
 import { reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { onMounted, ref } from 'vue';
 
 const formData = [
     {
@@ -36,13 +37,37 @@ const productData = reactive({
     status: ''
 })
 
-const addProduct = () => {
-    adminProductStore.addProduct(productData);
+const updateProduct = () => {
+    if (mode.value === 'EDIT PRODUCT') {
+        adminProductStore.updateProduct(productIndex.value, productData)
+    } else{
+        adminProductStore.addProduct(productData)
+    }
+    
     router.push({ name: 'admin-products-list' });
 }
 
 const adminProductStore = useAdminProductStore()
 const router = useRouter()
+const route = useRoute()
+const productIndex = ref(-1)
+const mode = ref('ADD PRODUCT')
+
+onMounted(() => {
+    if (route.params.id) {
+        productIndex.value = parseInt(route.params.id)
+        mode.value = 'EDIT PRODUCT'
+        /* เมื่อมีการกด Edit ให้ทำการโหลดข้อมูล */
+        const selectedProduct = adminProductStore.getProduct(productIndex.value)
+        productData.name = selectedProduct.name
+        productData.image = selectedProduct.image
+        productData.price = selectedProduct.price
+        productData.quantity = selectedProduct.quantity
+        productData.remainQuantity = selectedProduct.remainQuantity
+        productData.about = selectedProduct.about
+        productData.status = selectedProduct.status
+    }
+})
 
 </script>
 
@@ -51,7 +76,7 @@ const router = useRouter()
     <AdminLayout>
         <div class="container mx-auto">
             <div class="shadow-xl p-8">
-                <div class="text-2xl font-Pacifico font-bold">Add Product</div>
+                <div class="text-2xl font-Pacifico font-bold">{{ mode }}</div>
                 <div class="divider"></div>
                 <!-- form -->
                 <div class="grid grid-cols-2 gap-2">
@@ -72,14 +97,14 @@ const router = useRouter()
                         <select v-model="productData.status" class="select select-bordered">
                             <option disabled selected>choose status</option>
                             <option value="open">Open</option>
-                            <option value="closed">Closed</option>
+                            <option value="closed">Close</option>
                         </select>
                     </label>
                 </div>
                 <div class="divider"></div>
                 <div class="flex justify-end gap-2">
                     <button class="btn btn-ghost w-24" @click="router.back()">Back</button>
-                    <button class="btn btn-neutral w-24" @click="addProduct">Add</button>
+                    <button class="btn btn-neutral w-24" @click="updateProduct">{{ mode }}</button>
                 </div>
             </div>
         </div>
