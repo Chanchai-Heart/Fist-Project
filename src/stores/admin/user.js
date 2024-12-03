@@ -17,11 +17,9 @@ export const useAdminUserStore = defineStore("admin-user", {
     },
     updateUser(index, userData) {
       const fields = ["fullName", "role", "status"];
-      // for (const field of fields) {
-      //     this.list[index][field] = userData[field];
-      // }
-      fields.map((field) => (this.list[index][field] = userData[field]));
-
+      for (const field of fields) {
+          this.list[index][field] = userData[field];
+      }
       this.list[index].updatedAt = new Date().toISOString();
     },
     removeUser(index) {

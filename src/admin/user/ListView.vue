@@ -1,5 +1,6 @@
 <script setup>
 import { useAdminUserStore } from '@/stores/admin/user'
+import { RouterLink } from 'vue-router'
 
 import AdminLayout from '@/layouts/AdminLayout.vue'
 
@@ -28,7 +29,7 @@ const changeStatus = (index) => {
                 <td>{{ user.updatedAT }} </td>
                 <td>
                     <div class="flex gap-2">
-                        <button class="btn">Edit</button>
+                        <RouterLink :to="{ name: 'admin-user-update', params: { id: index } }" class="btn">Edit</RouterLink>
                         <button class="btn" @click="changeStatus(index)">
                             {{ user.status == 'Active' ? 'Disable' : 'Enable' }}
                         </button>
