@@ -25,7 +25,9 @@ const changeStatus = (index) => {
             <tr v-for="(user, index) in adminUserStore.list" :key="user">
                 <td>{{ user.fullName }} </td>
                 <td>{{ user.role }} </td>
-                <td>{{ user.status }} </td>
+                <td>
+                    <div class="badge" :class="user.status === 'Active' ? 'badge-success' : 'badge-error'">{{ user.status }} </div>
+                </td>
                 <td>{{ user.updatedAT }} </td>
                 <td>
                     <div class="flex gap-2">

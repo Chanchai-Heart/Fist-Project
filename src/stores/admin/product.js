@@ -28,7 +28,7 @@ export const useAdminProductStore = defineStore("admin-product", {
     updateProduct(index, productData) {
       const fields = [
         "name",
-        "image",
+        "imageUrl",
         "price",
         "quantity",
         "remainQuantity",
