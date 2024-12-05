@@ -2,9 +2,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 import { useAccountStore } from '@/stores/account';
+import { useEventStore } from '@/stores/event';
 
 const router = useRouter()
 const accountStore = useAccountStore();
+const eventStore = useEventStore();
 
 const email = ref('')
 const password = ref('')
@@ -16,7 +18,7 @@ const login = async() => {
       await accountStore.signInAdmin(email.value, password.value)
       router.push({ name: 'admin-dashboard' })
     } catch (error) {
-        console.log('error page =', error.message)
+        eventStore.popupMessage('error', error.message)
     }
 }
 

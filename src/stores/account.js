@@ -23,6 +23,9 @@ export const useAccountStore = defineStore("account", {
         onAuthStateChanged(auth, (user) => {
           if (user) {
             this.user = user;
+            if (user.email === 'heart@gmail.com') {
+              this.isAdmin = true;
+            }
             this.isLoggedIn = true;
             resolve(true);
           } else {
@@ -49,12 +52,14 @@ export const useAccountStore = defineStore("account", {
         this.isAdmin = true;
         this.user = result.user;
       } catch (error) {
-        console.log('error store =',error.code);
-        switch (error.code){
-          case 'auth/invalid-email':
-          throw new Error('อีเมลไม่ถูกต้อง')
+        console.log("error store =", error.code);
+        switch (error.code) {
+          case "auth/invalid-email":
+            throw new Error("อีเมลไม่ถูกต้อง");
+          case "auth/wrong-password":
+            throw new Error("รหัสผ่านไม่ถูกต้อง");
           default:
-          throw new Error('อีเมลหรือรหัสผ่านไม่ถูกต้อง')
+            throw new Error("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
         }
       }
     },

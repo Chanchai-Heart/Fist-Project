@@ -1,6 +1,7 @@
 <script setup>
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
+import { useAccountStore } from '@/stores/account';
 
 const menus = [
     {
@@ -19,14 +20,21 @@ const menus = [
         name: 'Order',
         routeName: 'admin-orders-list'
     },
-    {
-        name: 'Logout',
-        routeName: 'admin-login'
-    },
 ]
-
+const router = useRouter()
 const route = useRoute()
 const activeMenu = ref('')
+const accountStore = useAccountStore()
+
+const logout = async () => {
+    try {
+        await accountStore.logout()
+        router.push({ name: 'login-to' })
+    } catch (error) {
+        console.log('error', error)
+    }
+}
+
 /* เมื่อมีการเลื่อนไปแต่ละหน้า จะมีการ route change แล้วอัพเดทไปยัง activeMenu */
 onMounted(() => {
     activeMenu.value = route.name
@@ -55,9 +63,11 @@ onMounted(() => {
                         </li>
                         <!-- Sidebar content here -->
                         <li class="my-2" v-for="menu in menus" :key="menu">
-                            <RouterLink 
-                            :class="menu.routeName == activeMenu ? 'active' : ''" 
-                            :to="{ name: menu.routeName }">{{ menu.name }}</RouterLink>
+                            <RouterLink :class="menu.routeName == activeMenu ? 'active' : ''"
+                                :to="{ name: menu.routeName }">{{ menu.name }}</RouterLink>
+                        </li>
+                        <li>
+                            <a @click="logout">Logout</a>
                         </li>
                     </ul>
                 </div>
