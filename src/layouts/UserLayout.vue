@@ -3,33 +3,35 @@ import { ref, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 
 import { useCartStore } from "@/stores/cart";
+import { useAccountStore } from '@/stores/account';
 
 const cartStore = useCartStore();
+const accountStore = useAccountStore();
 
-const isLoggedIn = ref(false) // สถานะการเข้าสู่ระบบ
 const searchText = ref('')
 const router = useRouter()
 
-/* ฟังก์ชันเช็คการเข้าสู่ระบบ */
-onMounted(() => {
-    if (localStorage.getItem('isLoggedIn')) {
-        isLoggedIn.value = true
-    }
+onMounted(async () => {
+    await accountStore.checkAuth()
 })
 
 /* ฟังก์ชันเข้าสู่ระบบระบบ */
-const login = () => {
-    isLoggedIn.value = true
-    localStorage.setItem('isLoggedIn', 'true')
+const login = async () => {
+    try {
+        await accountStore.signInWithGoogle()
+    } catch (error) {
+        console.log('error', error)
+    }
 }
 
 /* ฟังก์ชันออกจากระบบ */
-const logout = () => {
-    isLoggedIn.value = false
-    localStorage.removeItem('isLoggedIn')
-    localStorage.removeItem('cart-data')
-    localStorage.removeItem('order-data')
-    window.location.reload() // refresh เว็บ
+const logout = async () => {
+    try {
+        await accountStore.logout()
+        window.location.reload() // refresh เว็บ
+    } catch (error) {
+        console.log('error', error)
+    }
 }
 
 /* ฟังก์ชันการค้นหา */
@@ -88,7 +90,7 @@ const handleSearch = (event) => {
                         </div>
                     </div>
                     <!-- Login --> <!-- v-if เมื่อยังไม่เข้าสู่ระบบจะเเสดงหน้า login -->
-                    <button @click="login" v-if="!isLoggedIn" class="btn btn-secondary">LOGIN</button>
+                    <button @click="login" v-if="!accountStore.isLoggedIn" class="btn btn-secondary">LOGIN</button>
                     <!-- Profile --> <!-- v-else เมื่อเข้าสู่ระบบจะเเสดงหน้าโปรไฟล์ -->
                     <div v-else class="dropdown dropdown-end">
                         <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">

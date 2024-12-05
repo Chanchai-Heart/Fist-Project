@@ -1,5 +1,24 @@
 <script setup>
-import { RouterLink } from 'vue-router';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { useAccountStore } from '@/stores/account';
+
+const router = useRouter()
+const accountStore = useAccountStore();
+
+const email = ref('')
+const password = ref('')
+
+const login = async() => {
+    console.log(email.value)
+    console.log(password.value)
+    try {
+      await accountStore.signInAdmin(email.value, password.value)
+      router.push({ name: 'admin-dashboard' })
+    } catch (error) {
+        console.log('error page =', error.message)
+    }
+}
 
 </script>
 
@@ -14,19 +33,19 @@ import { RouterLink } from 'vue-router';
                         <div class="label">
                             <span class="label-text">Email</span>
                         </div>
-                        <input type="text" placeholder="Your email" class="input input-bordered w-full" />
+                        <input v-model="email" type="text" placeholder="Your email" class="input input-bordered w-full" />
                     </label>
                     <!-- Password -->
                     <label class="form-control w-full">
                         <div class="label">
                             <span class="label-text">Password</span>
                         </div>
-                        <input type="password" placeholder="Your password" class="input input-bordered w-full" />
+                        <input v-model="password" type="password" placeholder="Your password" class="input input-bordered w-full" />
                     </label>
                     <!-- Submit -->
-                    <RouterLink :to="{ name: 'admin-dashboard' }" class="btn btn-neutral w-full mt-6 font-Inter">
+                    <button @click="login" class="btn btn-neutral w-full mt-6 font-Inter">
                         Login
-                    </RouterLink>
+                    </button>
                 </div>
             </div>
         </div>
