@@ -7,7 +7,10 @@ import {
   GoogleAuthProvider,
   signOut,
 } from "firebase/auth";
-import { auth } from "../firebase";
+
+import { doc, getDoc, setDoc } from "firebase/firestore";
+
+import { auth, db } from "../firebase";
 
 const provider = new GoogleAuthProvider();
 
@@ -20,13 +23,36 @@ export const useAccountStore = defineStore("account", {
   actions: {
     async checkAuth() {
       return new Promise((resolve) => {
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
           if (user) {
             this.user = user;
-            if (user.email === 'heart@gmail.com') {
+            console.log("user", user.uid);
+
+            const docRef = doc(db, "users", user.uid);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+              // ไม่สร้างข้อมูลใหม่
+              this.profile = docSnap.data();
+            } else {
+              // ถ้ายังไม่มีข้อมูลให้สร้างข้อมูลใหม่
+              const newUser = {
+                name: user.displayName,
+                role: "member",
+                status: "Active",
+                updateAt: new Date(),
+              };
+              await setDoc(docRef, newUser);
+              this.profile = newUser;
+            }
+            console.log('profile',this.profile);
+            if (this.profile.role === "admin") {
               this.isAdmin = true;
             }
             this.isLoggedIn = true;
+
+            //สำหรับสร้าง user + สร้าง data เข้า collection user ทันที
+            // member
             resolve(true);
           } else {
             this.isLoggedIn = false;

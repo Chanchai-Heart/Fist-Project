@@ -29,7 +29,7 @@ const accountStore = useAccountStore()
 const logout = async () => {
     try {
         await accountStore.logout()
-        router.push({ name: 'login-to' })
+        router.push({ name: 'home' })
     } catch (error) {
         console.log('error', error)
     }

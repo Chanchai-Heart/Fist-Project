@@ -56,7 +56,7 @@ const router = createRouter({
     /* Admin side */
     {
       path: "/admin/login",
-      name: "login-to",
+      name: "login",
       component: AdminLogin,
     },
     {
