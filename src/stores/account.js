@@ -26,7 +26,6 @@ export const useAccountStore = defineStore("account", {
         onAuthStateChanged(auth, async (user) => {
           if (user) {
             this.user = user;
-            console.log("user", user.uid);
 
             const docRef = doc(db, "users", user.uid);
             const docSnap = await getDoc(docRef);
@@ -45,7 +44,6 @@ export const useAccountStore = defineStore("account", {
               await setDoc(docRef, newUser);
               this.profile = newUser;
             }
-            console.log('profile',this.profile);
             if (this.profile.role === "admin") {
               this.isAdmin = true;
             }
