@@ -8,14 +8,14 @@ import { useEventStore } from '@/stores/event';
 const formData = [
     {
         name: 'Name',
-        field: 'fullName',
+        field: 'fullname',
         type: 'text'
     },
     {
         name: 'Role',
         field: 'role',
         type: 'select',
-        dropdown: [' Admin', 'User', 'Guest']
+        dropdown: ['admin', 'user', 'Guest']
     },
     {
         name: 'Status',
@@ -32,24 +32,24 @@ const userIndex = ref(-1);
 const eventStore = useEventStore();
 
 const userData = reactive({
-    fullName: '',
+    fullname: '',
     role: '',
     status: '',
 })
 
-onMounted(() => {
+onMounted(async () => {
     if (route.params.id) {
-        userIndex.value = parseInt(route.params.id)
-        const selectedUser = adminUserStore.getUser(userIndex.value)
+        userIndex.value = route.params.id
+        const selectedUser = await adminUserStore.getUser(userIndex.value)
         
-        userData.fullName = selectedUser.fullName
+        userData.fullname = selectedUser.fullname
         userData.role = selectedUser.role
         userData.status = selectedUser.status
     }
 })
 
-const updateUser = () => {
-    adminUserStore.updateUser(userIndex.value, userData)
+const updateUser = async () => {
+    await adminUserStore.updateUser(userIndex.value, userData)
     eventStore.popupMessage('info', 'Update user successfully')
     router.push({ name: 'admin-user-list' })
 }

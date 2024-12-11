@@ -44,10 +44,10 @@ const removeProduct = (index) => {
                             <div class="badge" :class="product.status === 'open' ? 'badge-success' : 'badge-error'">
                                 {{ product.status }}</div>
                         </td>
-                        <td>{{ product.updatedAT }}</td>
+                        <td>{{ product.updatedAt }}</td>
                         <td>
                             <div class="flex gap-4">
-                                <RouterLink :to="{ name: 'admin-products-update', params: { id: index } }"
+                                <RouterLink :to="{ name: 'admin-products-update', params: { id: product.productId } }"
                                     class="btn btn-ghost">
                                     <Edit class="w-6 h-6"></Edit>
                                 </RouterLink>

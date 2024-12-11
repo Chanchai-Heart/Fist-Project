@@ -1,58 +1,78 @@
 import { defineStore } from "pinia";
 
+import {
+  collection,
+  doc,
+  addDoc,
+  getDocs,
+  getDoc,
+  setDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "@/firebase";
+
 export const useAdminProductStore = defineStore("admin-product", {
   state: () => ({
     list: [],
     loaded: false,
   }),
   actions: {
-    loadProduct() {
-      const products = localStorage.getItem("admin-products");
-      if (products) {
-        this.list = JSON.parse(products);
-        this.loaded = true;
-      }
+    async loadProduct() {
+      const productCol = collection(db, "products");
+      const productSnapshot = await getDocs(productCol);
+      const products = productSnapshot.docs.map((doc) => {
+        const convertedProduct = doc.data();
+        convertedProduct.productId = doc.id;
+        convertedProduct.updatedAt = convertedProduct.updatedAt.toDate();
+        return convertedProduct;
+      });
+      this.list = products;
     },
-    getProduct(index) {
-      if (!this.loaded) {
-        this.loadProduct();
+    async getProduct(productId) {
+      try {
+        const productRef = doc(db, "products", productId);
+        const productSnapshot = await getDoc(productRef);
+        return productSnapshot.data();
+      } catch (error) {
+        console.log("error", error);
       }
       return this.list[index];
     },
-    addProduct(productData) {
-      productData.remainQuantity = productData.quantity;
-      productData.updatedAT = new Date().toISOString();
-      this.list.push(productData);
-      localStorage.setItem("admin-products", JSON.stringify(this.list));
+    async addProduct(productData) {
+      try {
+        productData.remainQuantity = productData.quantity;
+        productData.updatedAt = new Date().toISOString();
+        const productCol = collection(db, "products");
+        await addDoc(productCol, productData);
+      } catch (error) {
+        console.log("error", error);
+      }
     },
-    updateProduct(index, productData) {
-      const fields = [
-        "name",
-        "imageUrl",
-        "price",
-        "quantity",
-        "remainQuantity",
-        "status",
-      ];
-      /* การเขียนฟังก์ชั่นแบบที่ 1 */
-      // this.list[index].name = productData.name;
-      // this.list[index].image = productData.image;
-      // this.list[index].price = productData.price;
-      // this.list[index].quantity = productData.quantity;
-      // this.list[index].remainQuantity = productData.remainQuantity;
-      // this.list[index].status = productData.status;
-      /* การเขียนฟังก์ชั่นแบบที่ 2 */
-      // for (const field of fields) {
-      //   this.list[index][field] = productData[field];
-      // }
-      /* การเขียนฟังก์ชั่นแบบที่ 3 */
-      fields.map((field) => (this.list[index][field] = productData[field]));
-      
-      productData.updatedAT = new Date().toISOString();
-      localStorage.setItem("admin-products", JSON.stringify(this.list));
+    async updateProduct(index, productData) {
+      try {
+        const updateProduct = {}
+        updateProduct.name = productData.name;
+        updateProduct.image = productData.image;
+        updateProduct.price = productData.price;
+        updateProduct.quantity = productData.quantity;
+        updateProduct.remainQuantity = productData.remainQuantity;
+        updateProduct.status = productData.status;
+        updateProduct.updatedAt = new Date()
+
+        const productRef = doc(db, 'products', productId);
+        await setDoc(productRef, updateProduct);
+
+      } catch (error) {
+        console.log("error", error);
+      }
     },
-    removeProduct(index) {
-      this.list.splice(index, 1);
+    async removeProduct(productId) {
+      try {
+        const productRef = doc(db, 'products', productId);
+        await deleteDoc(productRef);
+      } catch (error) {
+        console.log("error", error);
+      }
     },
   },
 });

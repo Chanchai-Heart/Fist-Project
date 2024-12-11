@@ -37,14 +37,17 @@ const productData = reactive({
     status: ''
 })
 
-const updateProduct = () => {
-    if (mode.value === 'EDIT PRODUCT') {
-        adminProductStore.updateProduct(productIndex.value, productData)
-    } else{
-        adminProductStore.addProduct(productData)
+const updateProduct = async () => {
+    try {
+        if (mode.value === 'EDIT PRODUCT') {
+            await adminProductStore.updateProduct(productIndex.value, productData)
+        } else {
+            await adminProductStore.addProduct(productData)
+        }
+        router.push({ name: 'admin-products-list' });
+    } catch (error) {
+        console.log("error", error);
     }
-    
-    router.push({ name: 'admin-products-list' });
 }
 
 const adminProductStore = useAdminProductStore()
@@ -53,12 +56,13 @@ const route = useRoute()
 const productIndex = ref(-1)
 const mode = ref('ADD PRODUCT')
 
-onMounted(() => {
+onMounted(async () => {
     if (route.params.id) {
-        productIndex.value = parseInt(route.params.id)
+        productIndex.value = route.params.id
         mode.value = 'EDIT PRODUCT'
+
         /* เมื่อมีการกด Edit ให้ทำการโหลดข้อมูล */
-        const selectedProduct = adminProductStore.getProduct(productIndex.value)
+        const selectedProduct = await adminProductStore.getProduct(productIndex.value)
         productData.name = selectedProduct.name
         productData.imageUrl = selectedProduct.imageUrl
         productData.price = selectedProduct.price

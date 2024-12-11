@@ -9,22 +9,34 @@ export const useAdminUserStore = defineStore("admin-user", {
   }),
   actions: {
     async loadUser() {
-      const userCol = collection(db, "users");
-      const userSnapshot = await getDocs(userCol);
-      const userList = userSnapshot.docs.map((doc) => {
-        return doc.data();
+      const usersCol = collection(db, 'users')
+      const userSnapshot = await getDocs(usersCol)
+      const userList = userSnapshot.docs.map(doc => {
+        let convertedUser = doc.data()
+        convertedUser.uid = doc.id
+        convertedUser.updateAt = convertedUser.updateAt.toDate()
+        return convertedUser
       });
-      console.log(userList);
+      this.list = userList
     },
-    async getUser(index) {
-      return this.list[index];
-    },
-    async  updateUser(index, userData) {
-      const fields = ["fullName", "role", "status"];
-      for (const field of fields) {
-          this.list[index][field] = userData[field];
+    async getUser(uid) {
+      try{
+        const userRef = doc(db, 'users', uid)
+        const userSnapshot = await getDoc(userRef)
+        return userSnapshot.data()
+      } catch (error) {
+        console.log('error',error)
       }
-      this.list[index].updatedAt = new Date().toISOString();
+    },
+    async updateUser(uid, userData) {
+      const updatedUser ={
+        fullname: userData.fullname,
+        status: userData.status,
+        role: userData.role,
+        updateAt: new Date()
+      }
+      const docRef = doc(db, 'users', uid)
+      await setDoc(docRef, updatedUser)
     },
   },
 });
