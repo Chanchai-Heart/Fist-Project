@@ -26,6 +26,7 @@ export const useAdminProductStore = defineStore("admin-product", {
         convertedProduct.updatedAt = convertedProduct.updatedAt.toDate();
         return convertedProduct;
       });
+      console.log("products", products);
       this.list = products;
     },
     async getProduct(productId) {
@@ -41,27 +42,31 @@ export const useAdminProductStore = defineStore("admin-product", {
     async addProduct(productData) {
       try {
         productData.remainQuantity = productData.quantity;
-        productData.updatedAt = new Date().toISOString();
+        productData.updatedAt = new Date()
         const productCol = collection(db, "products");
         await addDoc(productCol, productData);
       } catch (error) {
         console.log("error", error);
       }
     },
-    async updateProduct(index, productData) {
+    async updateProduct(productId, productData) {
       try {
-        const updateProduct = {}
-        updateProduct.name = productData.name;
-        updateProduct.image = productData.image;
-        updateProduct.price = productData.price;
-        updateProduct.quantity = productData.quantity;
-        updateProduct.remainQuantity = productData.remainQuantity;
-        updateProduct.status = productData.status;
-        updateProduct.updatedAt = new Date()
+        const updateProduct = {
+        name: productData.name,
+        imageUrl: productData.imageUrl,
+        price: productData.price,
+        quantity: productData.quantity,
+        remainQuantity: productData.remainQuantity,
+        about: productData.about,
+        status: productData.status,
+        updatedAt: new Date()
+        }
 
         const productRef = doc(db, 'products', productId);
         await setDoc(productRef, updateProduct);
 
+        console.log("Product updated successfully:", updateProduct);
+        
       } catch (error) {
         console.log("error", error);
       }

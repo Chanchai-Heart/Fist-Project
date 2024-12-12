@@ -61,8 +61,8 @@ onMounted(async () => {
         productIndex.value = route.params.id
         mode.value = 'EDIT PRODUCT'
 
-        /* เมื่อมีการกด Edit ให้ทำการโหลดข้อมูล */
         const selectedProduct = await adminProductStore.getProduct(productIndex.value)
+
         productData.name = selectedProduct.name
         productData.imageUrl = selectedProduct.imageUrl
         productData.price = selectedProduct.price

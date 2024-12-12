@@ -28,7 +28,7 @@ export const useAdminOrderStore = defineStore("order", {
               "https://images.unsplash.com/photo-1458538977777-0549b2370168?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nzl8fHByb2R1Y3R8ZW58MHx8MHx8fDA%3D",
             description: "รายละเอียดสินค้า 2",
             quantity: 10,
-            about: "testt2",
+            about: "นี่คือสินค้าตัวใหม่ของเรา",
             status: "open",
             price: 100,
           },

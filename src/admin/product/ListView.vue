@@ -9,12 +9,13 @@ import Edit from '@/components/icons/Edit.vue'
 import Trash from '@/components/icons/Trash.vue'
 
 const adminProduct = useAdminProductStore()
-onMounted(() => {
-    adminProduct.loadProduct()
+onMounted(async () => {
+    await adminProduct.loadProduct()
 })
 
-const removeProduct = (index) => {
-    adminProduct.removeProduct(index)
+const removeProduct = async (index) => {
+    await adminProduct.removeProduct(index)
+    await adminProduct.loadProduct()
 }
 
 
@@ -35,7 +36,7 @@ const removeProduct = (index) => {
                 <!-- header เรียใช้จาก component Table -->
                 <Table :headers="['Name', 'Image', 'Price', 'Quantity', 'Status', 'Updated At', '']">
                     <!-- row 1 -->
-                    <tr v-for="(product, index) in adminProduct.list" :key="product">
+                    <tr v-for="(product) in adminProduct.list" :key="product">
                         <th>{{ product.name }}</th>
                         <td><img :src="product.imageUrl" class="w-24"></td>
                         <td>{{ product.price }}</td>
@@ -51,7 +52,7 @@ const removeProduct = (index) => {
                                     class="btn btn-ghost">
                                     <Edit class="w-6 h-6"></Edit>
                                 </RouterLink>
-                                <div @click="removeProduct(index)" class="btn btn-ghost">
+                                <div @click="removeProduct(product.productId)" class="btn btn-ghost">
                                     <Trash class="w-6 h-6"></Trash>
                                 </div>
                             </div>
